@@ -1,5 +1,5 @@
 set key=qcodecloudagent
-reg add HKCR\%key% /ve /d "URL:Description"
+reg add HKCR\%key% /ve /d "QCode Cloud Agent"
 reg add HKCR\%key% /v "URL Protocol" /d ""
 reg add HKCR\%key%\shell
 reg add HKCR\%key%\shell\open
