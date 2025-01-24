@@ -3,13 +3,5 @@ name = "QCodeCloudAgent"
 version = "0.1.0"
 edition = "2021"
 
-[[bin]]
-name = "protocol"
-path = "src/protocol/main.rs"
-
-[[bin]]
-name = "server"
-path = "src/protocol/main.rs"
-
 [dependencies]
 rouille = "3.6.2"
