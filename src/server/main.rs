@@ -1,10 +1,9 @@
 use rouille::router;
 
 fn main() {
-    println!("Now listening on localhost:8000");
 
     // The `start_server` starts listening forever on the given address.
-    rouille::start_server("localhost:8000", move |request| {
+    rouille::start_server("localhost:0", move |request| {
         router!(request,
             (GET) (/) => {
                 // If the request's URL is `/`, we jump here.
