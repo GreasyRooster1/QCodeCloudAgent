@@ -1,9 +1,11 @@
 use rouille::router;
 
+const PORT:i32 = 8181;
+
 fn main() {
 
     // The `start_server` starts listening forever on the given address.
-    rouille::start_server("localhost:0", move |request| {
+    rouille::start_server(format!("localhost:{PORT}"), move |request| {
         router!(request,
             (GET) (/) => {
                 // If the request's URL is `/`, we jump here.
