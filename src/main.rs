@@ -1,7 +1,11 @@
+use std::string::ToString;
 use rouille::router;
+use serde::Serialize;
 
 const PORT:i32 = 8181;
+const SKETCH_FOLDER:&str = "./sketches";
 
+#[derive(Serialize)]
 struct CreateResponse{
     ok:bool
 }
@@ -13,7 +17,11 @@ fn main() {
         router!(request,
 
             (GET) (/create/{id:String}) => {
-                rouille::Response::json()
+                let mut response = &CreateResponse{
+                    ok:true,
+                };
+
+                rouille::Response::json(response)
             },
             (GET) (/{id: String}) => {
                 println!("String {:?}", id);
