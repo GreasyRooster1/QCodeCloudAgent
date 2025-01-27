@@ -44,11 +44,6 @@ fn main() {
                 })
             },
 
-            (GET) (/{id: String}) => {
-                println!("String {:?}", id);
-                rouille::Response::text(format!("hello, {}", id))
-            },
-
             _ => rouille::Response::empty_404()
         )
     });
