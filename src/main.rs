@@ -2,6 +2,10 @@ use rouille::router;
 
 const PORT:i32 = 8181;
 
+struct CreateResponse{
+    ok:bool
+}
+
 fn main() {
 
     // The `start_server` starts listening forever on the given address.
@@ -9,7 +13,7 @@ fn main() {
         router!(request,
 
             (GET) (/create/{id:String}) => {
-                rouille::Response::text("hello world")
+                rouille::Response::json()
             },
             (GET) (/{id: String}) => {
                 println!("String {:?}", id);
