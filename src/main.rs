@@ -1,5 +1,6 @@
+use std::fs;
 use std::fs::File;
-use std::io::Read;
+use std::io::{Read, Write};
 use std::process::Command;
 use std::string::ToString;
 use rouille::router;
@@ -32,9 +33,10 @@ fn main() {
 
             (POST) (/write/{name:String}) => {
                 let path =  format!("{SKETCHES_FOLDER}/{name}/{name}.ino");
-                let mut file = File::create(path);
-                let data = request.data().unwrap().bytes();
-                write!(file, "{}", str::from_utf8(data));
+                let mut buffer = String::new();
+                let mut file = File::create(&path).unwrap();
+                request.data().unwrap().read_to_string(&mut buffer).unwrap();
+                file.write_all(buffer.as_bytes()).unwrap();
 
                 rouille::Response::json(&CreateResponse{
                     ok:true,
