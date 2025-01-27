@@ -15,6 +15,7 @@ struct CreateResponse{
 }
 
 fn main() {
+    run_cli_command(vec!["core".to_string(),"update-index".to_string()]);
 
     // The `start_server` starts listening forever on the given address.
     rouille::start_server(format!("localhost:{PORT}"), move |request| {
