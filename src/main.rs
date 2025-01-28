@@ -34,6 +34,18 @@ fn main() {
                 rouille::Response::json(&GENERIC_OK)
             },
 
+            (GET) (/compile/{name:String}) => {
+                run_cli_command(vec![
+                    "compile",
+                    "-b",
+                    "arduino:avr:uno",
+                    "-e",
+                    name.as_str(),
+                ]);
+
+                rouille::Response::json(&GENERIC_OK)
+            },
+
             (POST) (/write/{name:String}) => {
                 let path =  format!("{SKETCHES_FOLDER}/{name}/{name}.ino");
                 let mut buffer = String::new();
@@ -49,10 +61,17 @@ fn main() {
     });
 }
 
-fn run_cli_command(args:Vec<&str>){
+fn run_cli_command(args:Vec<&str>)->String{
+    let mut str = String::new();
     Command::new("arduino-cli")
         .current_dir(SKETCHES_FOLDER)
         .args(args)
         .spawn()
-        .expect("command failed");
+        .expect("command failed")
+        .stdout
+        .take()
+        .unwrap()
+        .read_to_string(&mut str)
+        .expect("cant collect");
+    str
 }
