@@ -8,11 +8,15 @@ use serde::Serialize;
 
 const PORT:i32 = 8181;
 const SKETCHES_FOLDER:&str = "./sketches";
+const GENERIC_OK:GenericResponse = GenericResponse{
+    ok:true
+};
 
 #[derive(Serialize)]
 struct GenericResponse {
     ok:bool
 }
+
 
 fn main() {
     run_cli_command(vec!["core".to_string(),"update-index".to_string()]);
@@ -27,9 +31,7 @@ fn main() {
                     name
                 ]);
 
-                rouille::Response::json(&GenericResponse{
-                    ok:true,
-                })
+                rouille::Response::json(&GENERIC_OK)
             },
 
             (POST) (/write/{name:String}) => {
@@ -39,9 +41,7 @@ fn main() {
                 request.data().unwrap().read_to_string(&mut buffer).unwrap();
                 file.write_all(buffer.as_bytes()).unwrap();
 
-                rouille::Response::json(&GenericResponse{
-                    ok:true,
-                })
+                rouille::Response::json(&GENERIC_OK)
             },
 
             _ => rouille::Response::empty_404()
