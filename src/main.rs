@@ -70,7 +70,11 @@ fn main() {
                     name.as_str(),
                 ]);
 
-                rouille::Response::json(&GENERIC_OK)
+                rouille::Response::json(&UploadResponse{
+                    success: true,
+                    port:port.to_string(),
+                    message: upload_out,
+                })
             },
 
             (GET) (/compile/{name:String}) => {
