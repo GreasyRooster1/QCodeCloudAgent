@@ -42,6 +42,10 @@ fn main() {
                 rouille::Response::json(&GENERIC_OK)
             },
 
+            (GET) (/upload/{name:String}) => {
+                rouille::Response::json(&GENERIC_OK)
+            },
+
             (GET) (/compile/{name:String}) => {
                 let output = run_cli_command(vec![
                     "compile",
@@ -51,6 +55,16 @@ fn main() {
                     name.as_str(),
                 ]);
                 println!("{}", output);
+
+                if output.starts_with("Used"){
+                    return rouille::Response::json(&CompileResponse{
+                        success:false,
+                        used_bytes:0,
+                        used_percent:0,
+                        max_bytes:0,
+                        message: output,
+                    });
+                }
 
                 let words = output.split(" ").collect::<Vec<&str>>();
                 let used_bytes = words[2].parse::<i32>().unwrap();
