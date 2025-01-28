@@ -66,7 +66,7 @@ fn main() {
                     "-p",
                     port,
                     "-fqbn",
-                    "arduino::avr:nano",
+                    "arduino:avr:nano",
                     name.as_str(),
                 ]);
 
