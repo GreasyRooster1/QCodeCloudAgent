@@ -59,7 +59,7 @@ fn main() {
 
                 let board_out_words = board_out.split_whitespace().collect::<Vec<&str>>();
 
-                let port = board_out_words[6];
+                let port = board_out_words[7];
 
                 let upload_out = run_cli_command(vec![
                     "upload",
