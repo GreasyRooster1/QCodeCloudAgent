@@ -62,9 +62,13 @@ fn main() {
 }
 
 fn run_cli_command(args:Vec<&str>)->String{
+    run_cli_command_with_path(args,"")
+}
+
+fn run_cli_command_with_path(args:Vec<&str>,dir:&str)->String{
     let mut str = String::new();
     Command::new("arduino-cli")
-        .current_dir(SKETCHES_FOLDER)
+        .current_dir(format!("{SKETCHES_FOLDER}/{dir}"))
         .args(args)
         .spawn()
         .expect("command failed")
