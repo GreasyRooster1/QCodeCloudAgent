@@ -65,7 +65,7 @@ fn main() {
                     "upload",
                     "-p",
                     port,
-                    "-fqbn",
+                    "--fqbn",
                     "arduino:avr:nano",
                     name.as_str(),
                 ]);
