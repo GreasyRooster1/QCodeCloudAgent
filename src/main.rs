@@ -51,17 +51,17 @@ fn main() {
 
             (GET) (/upload/{name:String}) => {
 
-                let board_out_words = run_cli_command(vec![
-                    "arduino-cli",
+                let board_out = run_cli_command(vec![
                     "board",
                     "list",
-                    name.as_str(),
-                ]).split_whitespace().collect::<Vec<&str>>();
+                ]);
+                println!("{}", board_out);
 
-                let port = board_out_words[6]
+                let board_out_words = board_out.split_whitespace().collect::<Vec<&str>>();
+
+                let port = board_out_words[6];
 
                 let upload_out = run_cli_command(vec![
-                    "arduino-cli",
                     "upload",
                     "-p",
                     port,
