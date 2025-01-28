@@ -54,9 +54,10 @@ fn main() {
                     "-e",
                     name.as_str(),
                 ]);
-                println!("{}", output);
+                println!("/{}", output);
+                 let words = output.split(" ").collect::<Vec<&str>>();
 
-                if output.starts_with("Used"){
+                if words[0].contains("Used"){
                     return rouille::Response::json(&CompileResponse{
                         success:false,
                         used_bytes:0,
@@ -66,7 +67,7 @@ fn main() {
                     });
                 }
 
-                let words = output.split(" ").collect::<Vec<&str>>();
+
                 let used_bytes = words[2].parse::<i32>().unwrap();
                 let percent_str = words[4];
                 let mut chars = percent_str.chars();
