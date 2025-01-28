@@ -1,7 +1,7 @@
 use std::fs;
 use std::fs::File;
 use std::io::{Read, Write};
-use std::process::Command;
+use std::process::{ChildStdout, Command};
 use std::string::ToString;
 use rouille::router;
 use serde::Serialize;
@@ -91,15 +91,21 @@ fn run_cli_command(args:Vec<&str>)->String{
 
 fn run_cli_command_with_path(args:Vec<&str>,dir:&str)->String{
     let mut str = String::new();
-    Command::new("arduino-cli")
+    let stdout = Command::new("arduino-cli")
         .current_dir(format!("{SKETCHES_FOLDER}/{dir}"))
         .args(args)
         .spawn()
         .expect("command failed")
         .stdout
-        .take()
-        .unwrap()
-        .read_to_string(&mut str)
-        .expect("cant collect");
-    str
+        .take();
+    match stdout {
+        None => {
+            "".to_string()
+        }
+        Some(mut s) => {
+            s.read_to_string(&mut str)
+            .expect("cant collect");
+            str
+        }
+    }
 }
