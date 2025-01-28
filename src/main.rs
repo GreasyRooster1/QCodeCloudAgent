@@ -17,6 +17,14 @@ struct GenericResponse {
     ok:bool
 }
 
+#[derive(Serialize)]
+struct CompileResponse {
+    success:bool,
+    used_bytes:i32,
+    used_percent:i32,
+    max_bytes:i32,
+    message:String,
+}
 
 fn main() {
     run_cli_command(vec!["core","update-index"]);
@@ -35,7 +43,7 @@ fn main() {
             },
 
             (GET) (/compile/{name:String}) => {
-                run_cli_command(vec![
+                let output = run_cli_command(vec![
                     "compile",
                     "-b",
                     "arduino:avr:uno",
@@ -43,7 +51,23 @@ fn main() {
                     name.as_str(),
                 ]);
 
-                rouille::Response::json(&GENERIC_OK)
+                let words = output.split(" ").collect::<Vec<&str>>();
+                let used_bytes = words[2].parse::<i32>().unwrap();
+                let percent_str = words[4];
+                let mut chars = percent_str.chars();
+                chars.next();
+                chars.next_back();
+                chars.next_back();
+                let percent = chars.as_str().parse::<i32>().unwrap();
+                let max_bytes = words[11].parse::<i32>().unwrap();
+
+                rouille::Response::json(&CompileResponse{
+                    success:true,
+                    used_bytes,
+                    used_percent,
+                    max_bytes,
+                    message: output,
+                })
             },
 
             (POST) (/write/{name:String}) => {
