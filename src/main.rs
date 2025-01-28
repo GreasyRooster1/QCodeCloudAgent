@@ -19,16 +19,16 @@ struct GenericResponse {
 
 
 fn main() {
-    run_cli_command(vec!["core".to_string(),"update-index".to_string()]);
+    run_cli_command(vec!["core","update-index"]);
 
     // The `start_server` starts listening forever on the given address.
     rouille::start_server(format!("localhost:{PORT}"), move |request| {
         router!(request,
             (GET) (/create/{name:String}) => {
                 run_cli_command(vec![
-                    "sketch".to_string(),
-                    "new".to_string(),
-                    name
+                    "sketch",
+                    "new",
+                    name.as_str(),
                 ]);
 
                 rouille::Response::json(&GENERIC_OK)
@@ -49,7 +49,7 @@ fn main() {
     });
 }
 
-fn run_cli_command(args:Vec<String>){
+fn run_cli_command(args:Vec<&str>){
     Command::new("arduino-cli")
         .current_dir(SKETCHES_FOLDER)
         .args(args)
