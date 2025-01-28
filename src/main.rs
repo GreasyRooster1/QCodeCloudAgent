@@ -1,7 +1,7 @@
 use std::fs;
 use std::fs::File;
 use std::io::{Read, Write};
-use std::process::{ChildStdout, Command};
+use std::process::{ChildStdout, Command, Output};
 use std::string::ToString;
 use rouille::router;
 use serde::Serialize;
@@ -50,6 +50,7 @@ fn main() {
                     "-e",
                     name.as_str(),
                 ]);
+                println!("{}", output);
 
                 let words = output.split(" ").collect::<Vec<&str>>();
                 let used_bytes = words[2].parse::<i32>().unwrap();
@@ -94,18 +95,10 @@ fn run_cli_command_with_path(args:Vec<&str>,dir:&str)->String{
     let stdout = Command::new("arduino-cli")
         .current_dir(format!("{SKETCHES_FOLDER}/{dir}"))
         .args(args)
-        .spawn()
-        .expect("command failed")
+        .output()
+        .unwrap()
         .stdout
-        .take();
-    match stdout {
-        None => {
-            "".to_string()
-        }
-        Some(mut s) => {
-            s.read_to_string(&mut str)
-            .expect("cant collect");
-            str
-        }
-    }
+        .as_mut_slice();
+
+    str::from_utf8(&stdout).unwrap();
 }
