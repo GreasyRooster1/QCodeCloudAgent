@@ -26,6 +26,13 @@ struct CompileResponse {
     message:String,
 }
 
+#[derive(Serialize)]
+struct UploadResponse {
+    success:bool,
+    port:String,
+    message:String,
+}
+
 fn main() {
     run_cli_command(vec!["core","update-index"]);
 
@@ -43,6 +50,26 @@ fn main() {
             },
 
             (GET) (/upload/{name:String}) => {
+
+                let board_out_words = run_cli_command(vec![
+                    "arduino-cli",
+                    "board",
+                    "list",
+                    name.as_str(),
+                ]).split_whitespace().collect::<Vec<&str>>();
+
+                let port = board_out_words[6]
+
+                let upload_out = run_cli_command(vec![
+                    "arduino-cli",
+                    "upload",
+                    "-p",
+                    port,
+                    "-fqbn",
+                    "arduino::avr:nano",
+                    name.as_str(),
+                ]);
+
                 rouille::Response::json(&GENERIC_OK)
             },
 
@@ -50,7 +77,7 @@ fn main() {
                 let output = run_cli_command(vec![
                     "compile",
                     "-b",
-                    "arduino:avr:uno",
+                    "arduino:avr:nano",
                     "-e",
                     name.as_str(),
                 ]);
