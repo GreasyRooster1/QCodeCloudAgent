@@ -58,7 +58,7 @@ fn main() {
                 chars.next();
                 chars.next_back();
                 chars.next_back();
-                let percent = chars.as_str().parse::<i32>().unwrap();
+                let used_percent = chars.as_str().parse::<i32>().unwrap();
                 let max_bytes = words[11].parse::<i32>().unwrap();
 
                 rouille::Response::json(&CompileResponse{
