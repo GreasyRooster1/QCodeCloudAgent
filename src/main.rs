@@ -92,13 +92,14 @@ fn run_cli_command(args:Vec<&str>)->String{
 
 fn run_cli_command_with_path(args:Vec<&str>,dir:&str)->String{
     let mut str = String::new();
-    let stdout = Command::new("arduino-cli")
+    let mut binding = Command::new("arduino-cli")
         .current_dir(format!("{SKETCHES_FOLDER}/{dir}"))
         .args(args)
         .output()
-        .unwrap()
+        .unwrap();
+    let stdout = binding
         .stdout
         .as_mut_slice();
 
-    str::from_utf8(&stdout).unwrap();
+    std::str::from_utf8(&stdout).unwrap().to_string()
 }
