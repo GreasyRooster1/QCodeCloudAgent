@@ -10,7 +10,7 @@ const PORT:i32 = 8181;
 const SKETCHES_FOLDER:&str = "./sketches";
 
 #[derive(Serialize)]
-struct CreateResponse{
+struct GenericResponse {
     ok:bool
 }
 
@@ -27,7 +27,7 @@ fn main() {
                     name
                 ]);
 
-                rouille::Response::json(&CreateResponse{
+                rouille::Response::json(&GenericResponse{
                     ok:true,
                 })
             },
@@ -39,7 +39,7 @@ fn main() {
                 request.data().unwrap().read_to_string(&mut buffer).unwrap();
                 file.write_all(buffer.as_bytes()).unwrap();
 
-                rouille::Response::json(&CreateResponse{
+                rouille::Response::json(&GenericResponse{
                     ok:true,
                 })
             },
