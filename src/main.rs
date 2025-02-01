@@ -9,12 +9,12 @@ use serde::Serialize;
 const PORT:i32 = 8181;
 const SKETCHES_FOLDER:&str = "./sketches";
 const GENERIC_OK:GenericResponse = GenericResponse{
-    ok:true
+    success:true
 };
 
 #[derive(Serialize)]
 struct GenericResponse {
-    ok:bool
+    success:bool
 }
 
 #[derive(Serialize)]
