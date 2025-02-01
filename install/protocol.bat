@@ -1,1 +1,1 @@
-start ./QCodeCloudAgent/exe
+start ./QCodeCloudAgent.exe
