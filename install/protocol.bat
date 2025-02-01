@@ -1,1 +1,1 @@
-start ./QCodeCloudAgent.exe
+start %UserProfile%\AppData\Local\QCodeCloudAgent\QCodeCloudAgent.exe
