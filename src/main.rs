@@ -39,7 +39,7 @@ fn main() {
     // The `start_server` starts listening forever on the given address.
     rouille::start_server(format!("localhost:{PORT}"), move |request| {
         router!(request,
-            (GET) (/create/{name:String}) => {
+            (POST) (/create/{name:String}) => {
                 run_cli_command(vec![
                     "sketch",
                     "new",
@@ -49,7 +49,7 @@ fn main() {
                 rouille::Response::json(&GENERIC_OK)
             },
 
-            (GET) (/upload/{name:String}) => {
+            (POST) (/upload/{name:String}) => {
 
                 let board_out = run_cli_command(vec![
                     "board",
@@ -77,7 +77,7 @@ fn main() {
                 })
             },
 
-            (GET) (/compile/{name:String}) => {
+            (POST) (/compile/{name:String}) => {
                 let output = run_cli_command(vec![
                     "compile",
                     "-b",
@@ -117,7 +117,7 @@ fn main() {
                 })
             },
 
-            (GET) (/write/{name:String}) => {
+            (POST) (/write/{name:String}) => {
                 let path =  format!("{SKETCHES_FOLDER}/{name}/{name}.ino");
                 let mut buffer = String::new();
                 let mut file = File::create(&path).unwrap();
