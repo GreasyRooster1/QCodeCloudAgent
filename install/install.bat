@@ -73,4 +73,4 @@ reg add HKCR\%key%\shell\open\command /f /ve /d "\"C:\Program Files\QCodeCloudAg
 
 mkdir "C:\Program Files\QCodeCloudAgent\"
 mkdir "C:\Program Files\QCodeCloudAgent\sketches"
-copy .\QCodeCloudAgent.exe "C:\Program Files\QCodeCloudAgent\sketches\QCodeCloudAgent.exe "
+copy .\QCodeCloudAgent.exe "C:\Program Files\QCodeCloudAgent\QCodeCloudAgent.exe "
