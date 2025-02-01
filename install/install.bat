@@ -69,8 +69,8 @@ reg add HKCR\%key% /ve /d "QCode Cloud Agent" /f
 reg add HKCR\%key% /v "URL Protocol" /d "" /f
 reg add HKCR\%key%\shell /f
 reg add HKCR\%key%\shell\open /f
-reg add HKCR\%key%\shell\open\command /f /ve /d "\"C:\Program Files\QCodeCloudAgent\QCodeCloudAgent.exe\" \"%%1\""
+reg add HKCR\%key%\shell\open\command /f /ve /d "\"%UserProfile%\AppData\Local\QCodeCloudAgent\QCodeCloudAgent.exe\" \"%%1\""
 
-mkdir "C:\Program Files\QCodeCloudAgent\"
-mkdir "C:\Program Files\QCodeCloudAgent\sketches"
-copy .\QCodeCloudAgent.exe "C:\Program Files\QCodeCloudAgent\QCodeCloudAgent.exe "
+mkdir %UserProfile%\AppData\Local\QCodeCloudAgent
+mkdir %UserProfile%\AppData\Local\QCodeCloudAgent\sketches
+copy .\QCodeCloudAgent.exe  %UserProfile%\AppData\Local\QCodeCloudAgent\QCodeCloudAgent.exe
