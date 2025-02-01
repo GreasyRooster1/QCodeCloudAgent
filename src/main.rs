@@ -128,7 +128,7 @@ fn main() {
             },
 
             (GET) (/status) => {
-                rouille::Response::empty_204()
+                rouille::Response::text("")
             },
 
             _ => rouille::Response::empty_404()
