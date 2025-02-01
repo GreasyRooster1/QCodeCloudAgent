@@ -59,13 +59,11 @@ fn main() {
 
                 let board_out_words = board_out.split_whitespace().collect::<Vec<&str>>();
                 if(board_out_words.len()==3){
-                    return rouille::Response::json(&CompileResponse{
+                    return rouille::Response::json(&UploadResponse{
                         success:false,
-                        used_bytes:0,
-                        used_percent:0,
-                        max_bytes:0,
+                        port:"".to_string(),
                         message: board_out,
-                    });
+                    }).with_additional_header("Access-Control-Allow-Origin", "*");
                 }
 
                 let port = board_out_words[7];
@@ -104,7 +102,7 @@ fn main() {
                         used_percent:0,
                         max_bytes:0,
                         message: output,
-                    });
+                    }).with_additional_header("Access-Control-Allow-Origin", "*");
                 }
 
 
