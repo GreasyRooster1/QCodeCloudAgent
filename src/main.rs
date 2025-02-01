@@ -46,7 +46,7 @@ fn main() {
                     name.as_str(),
                 ]);
 
-                rouille::Response::json(&GENERIC_OK)
+                rouille::Response::json(&GENERIC_OK).with_additional_header("Access-Control-Allow-Origin", "*")
             },
 
             (POST) (/upload/{name:String}) => {
@@ -74,7 +74,7 @@ fn main() {
                     success: true,
                     port:port.to_string(),
                     message: upload_out,
-                })
+                }).with_additional_header("Access-Control-Allow-Origin", "*")
             },
 
             (POST) (/compile/{name:String}) => {
@@ -114,7 +114,7 @@ fn main() {
                     used_percent,
                     max_bytes,
                     message: output,
-                })
+                }).with_additional_header("Access-Control-Allow-Origin", "*")
             },
 
             (POST) (/write/{name:String}) => {
@@ -124,11 +124,11 @@ fn main() {
                 request.data().unwrap().read_to_string(&mut buffer).unwrap();
                 file.write_all(buffer.as_bytes()).unwrap();
 
-                rouille::Response::json(&GENERIC_OK)
+                rouille::Response::json(&GENERIC_OK).with_additional_header("Access-Control-Allow-Origin", "*")
             },
 
             (GET) (/status) => {
-                rouille::Response::text("")
+                rouille::Response::text(" ").with_additional_header("Access-Control-Allow-Origin", "*")
             },
 
             _ => rouille::Response::empty_404()
