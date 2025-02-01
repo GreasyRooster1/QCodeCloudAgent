@@ -127,7 +127,7 @@ fn main() {
                 rouille::Response::json(&GENERIC_OK)
             },
 
-            (POST) (/status) => {
+            (GET) (/status) => {
                 rouille::Response::empty_204()
             },
 
