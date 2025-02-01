@@ -117,7 +117,7 @@ fn main() {
                 })
             },
 
-            (POST) (/write/{name:String}) => {
+            (GET) (/write/{name:String}) => {
                 let path =  format!("{SKETCHES_FOLDER}/{name}/{name}.ino");
                 let mut buffer = String::new();
                 let mut file = File::create(&path).unwrap();
