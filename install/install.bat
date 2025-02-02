@@ -73,5 +73,5 @@ reg add HKCR\%key%\shell\open\command /f /ve /d "\"%UserProfile%\AppData\Local\Q
 
 mkdir %UserProfile%\AppData\Local\QCodeCloudAgent
 mkdir %UserProfile%\AppData\Local\QCodeCloudAgent\sketches
-copy .\QCodeCloudAgent.exe  %UserProfile%\AppData\Local\QCodeCloudAgent\QCodeCloudAgent.exe
-copy .\protocol.bat  %UserProfile%\AppData\Local\QCodeCloudAgent\QCodeCloudAgent.bat
+copy .\data\QCodeCloudAgent.exe  %UserProfile%\AppData\Local\QCodeCloudAgent\QCodeCloudAgent.exe
+copy .\data\protocol.bat  %UserProfile%\AppData\Local\QCodeCloudAgent\QCodeCloudAgent.bat
