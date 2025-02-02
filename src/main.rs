@@ -7,9 +7,12 @@ use std::process::{ChildStdout, Command, Output};
 use std::string::ToString;
 use rouille::router;
 use serde::Serialize;
+
 const CREATE_NO_WINDOW: u32 = 0x08000000;
 const PORT:i32 = 8181;
 const SKETCHES_FOLDER:&str = "./sketches";
+const VERSION:&str = "1.0.0";
+
 const GENERIC_OK:GenericResponse = GenericResponse{
     success:true
 };
@@ -138,6 +141,10 @@ fn main() {
 
             (GET) (/status) => {
                 rouille::Response::text(" ").with_additional_header("Access-Control-Allow-Origin", "*")
+            },
+
+            (GET) (/version) => {
+                rouille::Response::text(VERSION).with_additional_header("Access-Control-Allow-Origin", "*")
             },
 
             _ => rouille::Response::empty_404()
