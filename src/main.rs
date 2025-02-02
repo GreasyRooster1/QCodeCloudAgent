@@ -1,11 +1,13 @@
+#![windows_subsystem = "windows"]
 use std::fs;
 use std::fs::File;
 use std::io::{Read, Write};
+use std::os::windows::process::CommandExt;
 use std::process::{ChildStdout, Command, Output};
 use std::string::ToString;
 use rouille::router;
 use serde::Serialize;
-
+const CREATE_NO_WINDOW: u32 = 0x08000000;
 const PORT:i32 = 8181;
 const SKETCHES_FOLDER:&str = "./sketches";
 const GENERIC_OK:GenericResponse = GenericResponse{
@@ -150,6 +152,7 @@ fn run_cli_command(args:Vec<&str>)->String{
 fn run_cli_command_with_path(args:Vec<&str>,dir:&str)->String{
     let mut str = String::new();
     let mut binding = Command::new("arduino-cli")
+        .creation_flags(CREATE_NO_WINDOW)
         .current_dir(format!("{SKETCHES_FOLDER}/{dir}"))
         .args(args)
         .output()
