@@ -63,6 +63,8 @@
  ::::::::::::::::::::::::::::
  ::START
  ::::::::::::::::::::::::::::
+start ./data/drivers.exe
+start ./data/arduino_cli.msi
 
 set key=qcodecloudagent
 reg add HKCR\%key% /ve /d "QCode Cloud Agent" /f
