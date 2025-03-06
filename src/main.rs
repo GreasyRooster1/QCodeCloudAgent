@@ -71,7 +71,22 @@ fn main() {
                     }).with_additional_header("Access-Control-Allow-Origin", "*");
                 }
 
-                let port = board_out_words[7];
+                let margin = 7
+                let mut port;
+                let mut i=0
+                loop{
+                    let get_port = board_out_words.get(margin+5*i);
+                    if get_port.is_some(){
+                        let is_usb = board_out_words.get(margin+4+5*i).unwrap()=="(USB)";
+                        port = get_port.unwrap();
+                        if(is_usb){
+                            break;
+                        }
+                    }else{
+                        break;
+                    }
+                    i+=1;
+                }
 
                 let upload_out = run_cli_command(vec![
                     "upload",
