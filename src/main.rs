@@ -56,10 +56,11 @@ fn main() {
 
             (POST) (/upload/{name:String}) => {
 
-                let board_out = run_cli_command(vec![
-                    "board",
-                    "list",
-                ]);
+                // let board_out = run_cli_command(vec![
+                //     "board",
+                //     "list",
+                // ]);
+                let board_out = "Port Protocol Type          Board Name FQBN            Core\nCOM1 serial   Serial Port   Unknown\nCOM4 serial   Serial Port (USB) Unknown".to_string();
                 println!("{}", board_out);
 
                 let board_out_words = board_out.split_whitespace().collect::<Vec<&str>>();
@@ -71,18 +72,20 @@ fn main() {
                     }).with_additional_header("Access-Control-Allow-Origin", "*");
                 }
 
-                let margin = 7
-                let mut port;
-                let mut i=0
+                let margin = 7;
+                let mut port="COM3";
+                let mut i=0;
                 loop{
-                    let get_port = board_out_words.get(margin+5*i);
-                    if get_port.is_some(){
-                        let is_usb = board_out_words.get(margin+4+5*i).unwrap()=="(USB)";
-                        port = get_port.unwrap();
-                        if(is_usb){
-                            break;
-                        }
-                    }else{
+                    if margin+5*i >= board_out_words.len(){
+                        break;
+                    }
+                    if margin+4+5*i >= board_out_words.len(){
+                        break;
+                    }
+                    let get_port = board_out_words[margin+5*i];
+                    let is_usb = board_out_words.get(margin+4+5*i).unwrap().eq(&"(USB)".to_string());
+                    port = get_port.clone();
+                    if is_usb{
                         break;
                     }
                     i+=1;
