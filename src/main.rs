@@ -11,7 +11,7 @@ use serde::Serialize;
 const CREATE_NO_WINDOW: u32 = 0x08000000;
 const PORT:i32 = 8181;
 const SKETCHES_FOLDER:&str = "./sketches";
-const VERSION:&str = "1.0.0";
+const VERSION:&str = "1.0.2";
 
 const GENERIC_OK:GenericResponse = GenericResponse{
     success:true
@@ -56,11 +56,11 @@ fn main() {
 
             (POST) (/upload/{name:String}) => {
 
-                // let board_out = run_cli_command(vec![
-                //     "board",
-                //     "list",
-                // ]);
-                let board_out = "Port Protocol Type          Board Name FQBN            Core\nCOM1 serial   Serial Port   Unknown\nCOM4 serial   Serial Port (USB) Unknown".to_string();
+                 let board_out = run_cli_command(vec![
+                     "board",
+                     "list",
+                 ]);
+                //let board_out = "Port Protocol Type          Board Name FQBN            Core\nCOM1 serial   Serial Port   Unknown\nCOM4 serial   Serial Port (USB) Unknown".to_string();
                 println!("{}", board_out);
 
                 let board_out_words = board_out.split_whitespace().collect::<Vec<&str>>();
@@ -109,6 +109,7 @@ fn main() {
 
             (POST) (/compile/{name:String}) => {
                 let output = run_cli_command(vec![
+                    "--no-color",
                     "compile",
                     "-b",
                     "arduino:avr:nano",
