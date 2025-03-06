@@ -118,7 +118,7 @@ fn main() {
                 println!("/{}", output);
                  let words = output.split(" ").collect::<Vec<&str>>();
 
-                if words[0].contains("Used"){
+                if !words[0].contains("Sketch"){
                     return rouille::Response::json(&CompileResponse{
                         success:false,
                         used_bytes:0,
