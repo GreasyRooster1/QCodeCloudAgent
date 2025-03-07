@@ -1,4 +1,4 @@
-#![windows_subsystem = "windows"]
+//#![windows_subsystem = "windows"]
 use std::fs;
 use std::fs::File;
 use std::io::{Read, Write};
@@ -109,7 +109,6 @@ fn main() {
 
             (POST) (/compile/{name:String}) => {
                 let output = run_cli_command(vec![
-                    "--no-color",
                     "compile",
                     "-b",
                     "arduino:avr:nano",
@@ -180,11 +179,12 @@ fn run_cli_command_with_path(args:Vec<&str>,dir:&str)->String{
     let mut binding = Command::new("arduino-cli")
         .creation_flags(CREATE_NO_WINDOW)
         .current_dir(format!("{SKETCHES_FOLDER}/{dir}"))
+        .arg("--no-color")
         .args(args)
         .output()
         .unwrap();
     let stdout = binding
-        .stdout
+        .stderr
         .as_mut_slice();
 
     std::str::from_utf8(&stdout).unwrap().to_string()
