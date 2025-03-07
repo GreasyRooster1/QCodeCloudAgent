@@ -122,9 +122,10 @@ fn main() {
                     "arduino:avr:nano",
                     "-e",
                     name.as_str(),
-                ])
+                ]);
                 let output = cmd_out.stdout;
                 println!("/{}", output);
+                println!("/{:?}", cmd_out.stderr);
                  let words = output.split(" ").collect::<Vec<&str>>();
 
                 if !words[0].contains("Sketch"){
