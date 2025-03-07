@@ -134,7 +134,7 @@ fn main() {
                         used_bytes:0,
                         used_percent:0,
                         max_bytes:0,
-                        message: cmd_out.stderr.to_string(),
+                        message: cmd_out.stderr.to_string().replace("\r","<br>"),
                     }).with_additional_header("Access-Control-Allow-Origin", "*");
                 }
 
