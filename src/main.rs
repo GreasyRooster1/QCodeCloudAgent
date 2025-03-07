@@ -38,6 +38,13 @@ struct UploadResponse {
     message:String,
 }
 
+struct CommandOutput{
+    stdout:String,
+    stderr:String,
+}
+
+//2.0: use json from cli
+
 fn main() {
     run_cli_command(vec!["core","update-index"]);
 
@@ -91,7 +98,7 @@ fn main() {
                     i+=1;
                 }
 
-                let upload_out = run_cli_command(vec![
+                let cmd_out = run_cli_command_collect_all(vec![
                     "upload",
                     "-p",
                     port,
@@ -99,22 +106,24 @@ fn main() {
                     "arduino:avr:nano",
                     name.as_str(),
                 ]);
+                let upload_out = cmd_out.stdout;
 
                 rouille::Response::json(&UploadResponse{
                     success: true,
                     port:port.to_string(),
-                    message: upload_out,
+                    message: cmd_out.stderr,
                 }).with_additional_header("Access-Control-Allow-Origin", "*")
             },
 
             (POST) (/compile/{name:String}) => {
-                let output = run_cli_command(vec![
+                let cmd_out =run_cli_command_collect_all(vec![
                     "compile",
                     "-b",
                     "arduino:avr:nano",
                     "-e",
                     name.as_str(),
-                ]);
+                ])
+                let output = cmd_out.stdout;
                 println!("/{}", output);
                  let words = output.split(" ").collect::<Vec<&str>>();
 
@@ -124,7 +133,7 @@ fn main() {
                         used_bytes:0,
                         used_percent:0,
                         max_bytes:0,
-                        message: output,
+                        message: cmd_out.stderr.to_string(),
                     }).with_additional_header("Access-Control-Allow-Origin", "*");
                 }
 
@@ -171,10 +180,14 @@ fn main() {
 }
 
 fn run_cli_command(args:Vec<&str>)->String{
+    run_cli_command_with_path(args,"").stdout
+}
+
+fn run_cli_command_collect_all(args:Vec<&str>)->CommandOutput{
     run_cli_command_with_path(args,"")
 }
 
-fn run_cli_command_with_path(args:Vec<&str>,dir:&str)->String{
+fn run_cli_command_with_path(args:Vec<&str>,dir:&str)->CommandOutput{
     let mut str = String::new();
     let mut binding = Command::new("arduino-cli")
         .creation_flags(CREATE_NO_WINDOW)
@@ -184,8 +197,14 @@ fn run_cli_command_with_path(args:Vec<&str>,dir:&str)->String{
         .output()
         .unwrap();
     let stdout = binding
+        .stdout
+        .as_mut_slice();
+    let stderr = binding
         .stderr
         .as_mut_slice();
 
-    std::str::from_utf8(&stdout).unwrap().to_string()
+    CommandOutput {
+        stdout:std::str::from_utf8(&stdout).unwrap().to_string(),
+        stderr: std::str::from_utf8(&stderr).unwrap().to_string(),
+    }
 }
