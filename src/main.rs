@@ -1,4 +1,7 @@
 #![windows_subsystem = "windows"]
+
+mod arduino;
+
 use std::fs;
 use std::fs::File;
 use std::io::{Read, Write};
@@ -7,44 +10,30 @@ use std::process::{ChildStdout, Command, Output};
 use std::string::ToString;
 use rouille::router;
 use serde::Serialize;
-
-const CREATE_NO_WINDOW: u32 = 0x08000000;
-const PORT:i32 = 8181;
-const SKETCHES_FOLDER:&str = "./sketches";
-const ARDUINO_VERSION:&str = "1.0.2";
-
-const GENERIC_OK:GenericResponse = GenericResponse{
-    success:true
-};
-
-#[derive(Serialize)]
-struct GenericResponse {
-    success:bool
-}
-
-#[derive(Serialize)]
-struct CompileResponse {
-    success:bool,
-    used_bytes:i32,
-    used_percent:i32,
-    max_bytes:i32,
-    message:String,
-}
-
-#[derive(Serialize)]
-struct UploadResponse {
-    success:bool,
-    port:String,
-    message:String,
-}
-
-struct CommandOutput{
-    stdout:String,
-    stderr:String,
-}
-
+use crate::arduino::start_arduino;
 //2.0: use json from cli
 
+const VERSION:&str = "2.0.0";
+const PORT:i32 = 8181;
+
+//8181: main server
+//8282: arduino server
+//8383: py server
+
 fn main() {
-    start_arduino();
+
+    rouille::start_server(format!("localhost:{PORT}"), move |request| {
+        router!(request,
+            (GET) (/status) => {
+                rouille::Response::text(" ").with_additional_header("Access-Control-Allow-Origin", "*")
+            },
+
+            (GET) (/version) => {
+                rouille::Response::text(VERSION).with_additional_header("Access-Control-Allow-Origin", "*")
+            },
+
+            _ => rouille::Response::empty_404()
+        )
+    });
+
 }

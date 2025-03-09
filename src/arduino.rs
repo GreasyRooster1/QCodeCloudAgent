@@ -9,7 +9,7 @@ use rouille::router;
 use serde::Serialize;
 
 const CREATE_NO_WINDOW: u32 = 0x08000000;
-const PORT:i32 = 8181;
+const ARDUINO_PORT:i32 = 8282;
 const SKETCHES_FOLDER:&str = "./sketches";
 const ARDUINO_VERSION:&str = "1.0.2";
 
@@ -45,11 +45,11 @@ struct CommandOutput{
 
 //2.0: use json from cli
 
-fn main() {
+pub fn start_arduino() {
     run_cli_command(vec!["core","update-index"]);
 
     // The `start_server` starts listening forever on the given address.
-    rouille::start_server(format!("localhost:{PORT}"), move |request| {
+    rouille::start_server(format!("localhost:{ARDUINO_PORT}"), move |request| {
         router!(request,
             (POST) (/create/{name:String}) => {
                 run_cli_command(vec![
