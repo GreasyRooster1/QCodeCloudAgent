@@ -2,7 +2,7 @@
 
 mod arduino;
 
-use std::fs;
+use std::{fs, thread};
 use std::fs::File;
 use std::io::{Read, Write};
 use std::os::windows::process::CommandExt;
@@ -10,7 +10,7 @@ use std::process::{ChildStdout, Command, Output};
 use std::string::ToString;
 use rouille::router;
 use serde::Serialize;
-use crate::arduino::start_arduino;
+use crate::arduino::{start_arduino, ARDUINO_PORT};
 //2.0: use json from cli
 
 const VERSION:&str = "2.0.0";
@@ -32,8 +32,16 @@ fn main() {
                 rouille::Response::text(VERSION).with_additional_header("Access-Control-Allow-Origin", "*")
             },
 
+            (GET) (/start/arduino) => {
+                thread::spawn(start_arduino);
+                rouille::Response::text(format!("{}" ,ARDUINO_PORT)).with_additional_header("Access-Control-Allow-Origin", "*")
+            },
+            // (GET) (/start/python) => {
+            //     thread::spawn(start_arduino);
+            //     rouille::Response::text(format!("{}" ,ARDUINO_PORT)).with_additional_header("Access-Control-Allow-Origin", "*")
+            // },
+
             _ => rouille::Response::empty_404()
         )
     });
-
 }

@@ -9,7 +9,7 @@ use rouille::router;
 use serde::Serialize;
 
 const CREATE_NO_WINDOW: u32 = 0x08000000;
-const ARDUINO_PORT:i32 = 8282;
+pub const ARDUINO_PORT:i32 = 8282;
 const SKETCHES_FOLDER:&str = "./sketches";
 const ARDUINO_VERSION:&str = "1.0.2";
 
