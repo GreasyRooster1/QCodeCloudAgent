@@ -1,11 +1,12 @@
 use std::os::windows::process::CommandExt;
 use std::process::Command;
 use rouille::router;
+use crate::CommandOutput;
 
 const CREATE_NO_WINDOW: u32 = 0x08000000;
 pub const PYTHON_PORT:i32 = 8383;
 const PYTHON_FOLDER:&str = "./python";
-const ARDUINO_VERSION:&str = "1.0.2";
+const PYTHON_VERSION:&str = "1.0.2";
 
 
 pub fn start_python() {
@@ -142,7 +143,7 @@ pub fn start_python() {
     });
 }
 
-fn run_command(command: String,args: Vec<&str>,dir:&str) {
+fn run_command(command: String,args: Vec<&str>,dir:&str)->CommandOutput {
     let mut str = String::new();
     let mut binding = Command::new(command)
         .creation_flags(CREATE_NO_WINDOW)
