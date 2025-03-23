@@ -17,7 +17,7 @@ const SERIALIZED_SYSTEM_NAME:&str = "__serialized_filesystem.internal.json";
 pub fn start_python() {
 
     // The `start_server` starts listening forever on the given address.
-    rouille::start_server(format!("localhost:{PYTHON_FOLDER}"), move |request| {
+    rouille::start_server(format!("localhost:{PYTHON_PORT}"), move |request| {
         router!(request,
             (POST) (/deserialize/{name:String}) => {
                 let path =  format!("{PYTHON_FOLDER}/{name}/{SERIALIZED_SYSTEM_NAME}");
