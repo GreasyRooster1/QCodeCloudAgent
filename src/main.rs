@@ -2,6 +2,7 @@
 
 
 mod arduino;
+mod python;
 
 use std::{fs, thread};
 use std::fs::File;
@@ -16,6 +17,11 @@ use crate::arduino::{start_arduino, ARDUINO_PORT};
 
 const VERSION:&str = "2.0.0";
 const PORT:i32 = 8181;
+
+pub struct CommandOutput{
+    stdout:String,
+    stderr:String,
+}
 
 //8181: main server
 //8282: arduino server

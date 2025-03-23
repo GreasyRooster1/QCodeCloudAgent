@@ -38,11 +38,6 @@ struct UploadResponse {
     message:String,
 }
 
-struct CommandOutput{
-    stdout:String,
-    stderr:String,
-}
-
 //2.0: use json from cli
 
 pub fn start_arduino() {
