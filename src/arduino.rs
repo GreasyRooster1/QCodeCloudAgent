@@ -7,7 +7,7 @@ use std::process::{ChildStdout, Command, Output};
 use std::string::ToString;
 use rouille::router;
 use serde::Serialize;
-use crate::CommandOutput;
+use crate::{CommandOutput, GENERIC_OK};
 
 const CREATE_NO_WINDOW: u32 = 0x08000000;
 pub const ARDUINO_PORT:i32 = 8282;

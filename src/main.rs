@@ -13,6 +13,7 @@ use std::string::ToString;
 use rouille::router;
 use serde::Serialize;
 use crate::arduino::{start_arduino, ARDUINO_PORT};
+use crate::python::PYTHON_PORT;
 //2.0: use json from cli
 
 const VERSION:&str = "2.0.0";
@@ -52,7 +53,7 @@ fn main() {
             },
             (GET) (/start/python) => {
                 thread::spawn(start_arduino);
-                rouille::Response::text(format!("{}" ,ARDUINO_PORT)).with_additional_header("Access-Control-Allow-Origin", "*")
+                rouille::Response::text(format!("{}" ,PYTHON_PORT)).with_additional_header("Access-Control-Allow-Origin", "*")
             },
 
             _ => rouille::Response::empty_404().with_additional_header("Access-Control-Allow-Origin", "*")
