@@ -31,11 +31,12 @@ pub fn start_python() {
 
             (POST) (/write/{name:String}) => {
                 let path =  format!("{PYTHON_FOLDER}/{name}/{SERIALIZED_SYSTEM_NAME}");
+                fs::create_dir_all(path as File).unwrap();
                 let mut buffer = String::new();
                 let mut file = File::create(&path).unwrap();
                 request.data().unwrap().read_to_string(&mut buffer).unwrap();
                 file.write_all(buffer.as_bytes()).unwrap();
-                fs::create_dir_all(PYTHON_FOLDER).unwrap();
+
 
                 rouille::Response::json(&GENERIC_OK).with_additional_header("Access-Control-Allow-Origin", "*")
             },
