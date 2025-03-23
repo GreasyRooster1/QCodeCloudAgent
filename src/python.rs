@@ -1,29 +1,23 @@
+use std::fs;
+use std::fs::File;
+use std::io::{Read, Write};
 use std::os::windows::process::CommandExt;
 use std::process::Command;
 use rouille::router;
-use crate::CommandOutput;
+use crate::{CommandOutput, GENERIC_OK};
 
 const CREATE_NO_WINDOW: u32 = 0x08000000;
 pub const PYTHON_PORT:i32 = 8383;
 const PYTHON_FOLDER:&str = "./python";
 const PYTHON_VERSION:&str = "1.0.2";
 
+const SERIALIZED_SYSTEM_NAME:&str = "__serialized_filesystem.internal.json";
 
 pub fn start_python() {
 
     // The `start_server` starts listening forever on the given address.
     rouille::start_server(format!("localhost:{PYTHON_FOLDER}"), move |request| {
         router!(request,
-            (POST) (/create/{name:String}) => {
-                run_cli_command(vec![
-                    "sketch",
-                    "new",
-                    name.as_str(),
-                ]);
-
-                rouille::Response::json(&GENERIC_OK).with_additional_header("Access-Control-Allow-Origin", "*")
-            },
-
             (POST) (/upload/{name:String}) => {
 
                  let board_out = run_cli_command(vec![
@@ -121,11 +115,12 @@ pub fn start_python() {
             },
 
             (POST) (/write/{name:String}) => {
-                let path =  format!("{SKETCHES_FOLDER}/{name}/{name}.ino");
+                let path =  format!("{PYTHON_FOLDER}/{name}/{SERIALIZED_SYSTEM_NAME}");
                 let mut buffer = String::new();
                 let mut file = File::create(&path).unwrap();
                 request.data().unwrap().read_to_string(&mut buffer).unwrap();
                 file.write_all(buffer.as_bytes()).unwrap();
+                fs::create_dir_all(PYTHON_FOLDER).unwrap();
 
                 rouille::Response::json(&GENERIC_OK).with_additional_header("Access-Control-Allow-Origin", "*")
             },

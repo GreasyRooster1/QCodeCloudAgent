@@ -14,15 +14,6 @@ pub const ARDUINO_PORT:i32 = 8282;
 const SKETCHES_FOLDER:&str = "./sketches";
 const ARDUINO_VERSION:&str = "1.0.2";
 
-const GENERIC_OK:GenericResponse = GenericResponse{
-    success:true
-};
-
-#[derive(Serialize)]
-struct GenericResponse {
-    success:bool
-}
-
 #[derive(Serialize)]
 struct CompileResponse {
     success:bool,

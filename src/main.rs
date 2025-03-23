@@ -22,6 +22,13 @@ pub struct CommandOutput{
     stdout:String,
     stderr:String,
 }
+#[derive(Serialize)]
+pub struct GenericResponse {
+    success:bool
+}
+pub const GENERIC_OK:GenericResponse = GenericResponse {
+    success:true
+};
 
 //8181: main server
 //8282: arduino server
