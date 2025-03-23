@@ -43,6 +43,7 @@ struct UploadResponse {
 
 pub fn start_arduino() {
     run_cli_command(vec!["core","update-index"]);
+    fs::create_dir_all(SKETCHES_FOLDER).unwrap();
 
     // The `start_server` starts listening forever on the given address.
     rouille::start_server(format!("localhost:{ARDUINO_PORT}"), move |request| {
