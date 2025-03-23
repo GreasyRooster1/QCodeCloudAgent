@@ -9,7 +9,7 @@ use crate::{CommandOutput, GENERIC_OK};
 const CREATE_NO_WINDOW: u32 = 0x08000000;
 pub const PYTHON_PORT:i32 = 8383;
 const PYTHON_FOLDER:&str = "./python";
-const PYTHON_VERSION:&str = "1.0.2";
+const PYTHON_VERSION:&str = "1.0.0";
 
 const SERIALIZED_SYSTEM_NAME:&str = "__serialized_filesystem.internal.json";
 
@@ -130,7 +130,7 @@ pub fn start_python() {
             },
 
             (GET) (/version) => {
-                rouille::Response::text(ARDUINO_VERSION).with_additional_header("Access-Control-Allow-Origin", "*")
+                rouille::Response::text(PYTHON_VERSION).with_additional_header("Access-Control-Allow-Origin", "*")
             },
 
             _ => rouille::Response::empty_404()
