@@ -4,6 +4,7 @@ use std::io::{Read, Write};
 use std::os::windows::process::CommandExt;
 use std::process::Command;
 use rouille::router;
+use serde_json::Value;
 use crate::{CommandOutput, GENERIC_OK};
 
 const CREATE_NO_WINDOW: u32 = 0x08000000;
@@ -20,11 +21,10 @@ pub fn start_python() {
         router!(request,
             (POST) (/deserialize/{name:String}) => {
                 let path =  format!("{PYTHON_FOLDER}/{name}/{SERIALIZED_SYSTEM_NAME}");
-                let mut buffer = String::new();
-                let mut file = File::create(&path).unwrap();
-                request.data().unwrap().read_to_string(&mut buffer).unwrap();
-                file.write_all(buffer.as_bytes()).unwrap();
-                fs::create_dir_all(PYTHON_FOLDER).unwrap();
+                let content: String = fs::read_to_string(path).unwrap();
+
+                let system_json: Value = serde_json::from_str(content.as_str()).unwrap();
+                println!("{content}");
 
                 rouille::Response::json(&GENERIC_OK).with_additional_header("Access-Control-Allow-Origin", "*")
             },
