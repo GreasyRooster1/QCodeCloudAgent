@@ -37,12 +37,12 @@ fn main() {
                 thread::spawn(start_arduino);
                 rouille::Response::text(format!("{}" ,ARDUINO_PORT)).with_additional_header("Access-Control-Allow-Origin", "*")
             },
-            // (GET) (/start/python) => {
-            //     thread::spawn(start_arduino);
-            //     rouille::Response::text(format!("{}" ,ARDUINO_PORT)).with_additional_header("Access-Control-Allow-Origin", "*")
-            // },
+            (GET) (/start/python) => {
+                thread::spawn(start_arduino);
+                rouille::Response::text(format!("{}" ,ARDUINO_PORT)).with_additional_header("Access-Control-Allow-Origin", "*")
+            },
 
-            _ => rouille::Response::empty_404()
+            _ => rouille::Response::empty_404().with_additional_header("Access-Control-Allow-Origin", "*")
         )
     });
 }
