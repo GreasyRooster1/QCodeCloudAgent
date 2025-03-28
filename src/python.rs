@@ -63,12 +63,13 @@ pub fn start_python() {
 fn deserialize_filesystem(folder:&mut Value,path:String) {
     fs::create_dir_all(Path::new(&path)).unwrap();
     for (key, val) in folder.as_object_mut().unwrap() {
+        let parsed_key = key.replace("➽",".");
         if val.is_string() {
-            let mut file = File::create(format!("{}/{}", &path, &key)).unwrap();
+            let mut file = File::create(format!("{}/{}", &path, &parsed_key)).unwrap();
             file.write_all(val.as_str().unwrap().as_bytes()).unwrap();
         }
         if val.is_object() {
-            deserialize_filesystem(val, format!("{}/{}", &path, &key));
+            deserialize_filesystem(val, format!("{}/{}", &path, &parsed_key));
         }
     }
 }
