@@ -22,10 +22,9 @@ pub fn start_python() {
         router!(request,
             (POST) (/deserialize/{name:String}) => {
                 let path =  format!("{PYTHON_FOLDER}/{name}/{SERIALIZED_SYSTEM_NAME}");
-                let content: String = fs::read_to_string(path).unwrap();
+                let content: String = fs::read_to_string(&path).unwrap();
 
                 let system_json: Value = serde_json::from_str(content.as_str()).unwrap();
-                println!("{content}");
 
                 rouille::Response::json(&GENERIC_OK).with_additional_header("Access-Control-Allow-Origin", "*")
             },
@@ -37,7 +36,6 @@ pub fn start_python() {
                 let mut file = File::create(&path).unwrap();
                 request.data().unwrap().read_to_string(&mut buffer).unwrap();
                 file.write_all(buffer.as_bytes()).unwrap();
-
 
                 rouille::Response::json(&GENERIC_OK).with_additional_header("Access-Control-Allow-Origin", "*")
             },
