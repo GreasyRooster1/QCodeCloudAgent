@@ -34,12 +34,12 @@ pub fn start_python() {
             (POST) (/write/{name:String}) => {
                 let path =  format!("{PYTHON_FOLDER}/{name}/");
                 let system_path =  format!("{PYTHON_FOLDER}/{name}/{SERIALIZED_SYSTEM_NAME}");
+                let mut buffer = String::new();
+                fs::create_dir_all(Path::new(&system_path).parent().unwrap()).unwrap();
 
                 fs::remove_dir_all(&path).unwrap();
                 fs::create_dir(&path).unwrap();
 
-                let mut buffer = String::new();
-                fs::create_dir_all(Path::new(&system_path).parent().unwrap()).unwrap();
                 let mut file = File::create(&system_path).unwrap();
                 request.data().unwrap().read_to_string(&mut buffer).unwrap();
                 file.write_all(buffer.as_bytes()).unwrap();
