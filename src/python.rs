@@ -85,7 +85,7 @@ fn run_command(command: String,args: Vec<&str>,dir:&str)->CommandOutput {
     let mut str = String::new();
     let mut binding = Command::new(command)
         .creation_flags(CREATE_NO_WINDOW)
-        .current_dir(format!("{PYTHON_FOLDER}/{dir}"))
+        .current_dir(dir)
         .args(args)
         .output()
         .unwrap();
