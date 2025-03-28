@@ -55,17 +55,18 @@ pub fn start_python() {
     });
 }
 
-fn deserialize_filesystem(mut folder:&Value,path:String){
+fn deserialize_filesystem(mut folder:&Value,path:String) {
     fs::create_dir_all(Path::new(&path)).unwrap();
     for (key, val) in folder.as_object_mut().unwrap() {
-        if val.is_string(){
+        if val.is_string() {
             let mut file = File::create(format!("{}/{}", &path, &key)).unwrap();
             file.write_all(val.as_str().unwrap().as_bytes()).unwrap();
         }
-        if val.is_object(){
-            deserialize_filesystem(val,format!("{}/{}", &path, &key));
+        if val.is_object() {
+            deserialize_filesystem(val, format!("{}/{}", &path, &key));
         }
     }
+}
 
 fn run_command(command: String,args: Vec<&str>,dir:&str)->CommandOutput {
     let mut str = String::new();
