@@ -21,10 +21,12 @@ pub fn start_python() {
     rouille::start_server(format!("localhost:{PYTHON_PORT}"), move |request| {
         router!(request,
             (POST) (/deserialize/{name:String}) => {
-                let path =  format!("{PYTHON_FOLDER}/{name}/{SERIALIZED_SYSTEM_NAME}");
-                let content: String = fs::read_to_string(&path).unwrap();
+                let path =  format!("{PYTHON_FOLDER}/{name}/");
+                let system_path =  format!("{PYTHON_FOLDER}/{name}/{SERIALIZED_SYSTEM_NAME}");
+                let content: String = fs::read_to_string(&system_path).unwrap();
 
                 let system_json: Value = serde_json::from_str(content.as_str()).unwrap();
+                deserialize_filesystem(&system_json,path);
 
                 rouille::Response::json(&GENERIC_OK).with_additional_header("Access-Control-Allow-Origin", "*")
             },
@@ -52,6 +54,18 @@ pub fn start_python() {
         )
     });
 }
+
+fn deserialize_filesystem(mut folder:&Value,path:String){
+    fs::create_dir_all(Path::new(&path)).unwrap();
+    for (key, val) in folder.as_object_mut().unwrap() {
+        if val.is_string(){
+            let mut file = File::create(format!("{}/{}", &path, &key)).unwrap();
+            file.write_all(val.as_str().unwrap().as_bytes()).unwrap();
+        }
+        if val.is_object(){
+            deserialize_filesystem(val,format!("{}/{}", &path, &key));
+        }
+    }
 
 fn run_command(command: String,args: Vec<&str>,dir:&str)->CommandOutput {
     let mut str = String::new();
