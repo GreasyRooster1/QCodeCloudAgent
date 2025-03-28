@@ -25,17 +25,22 @@ pub fn start_python() {
                 let system_path =  format!("{PYTHON_FOLDER}/{name}/{SERIALIZED_SYSTEM_NAME}");
                 let content: String = fs::read_to_string(&system_path).unwrap();
 
-                let system_json: Value = serde_json::from_str(content.as_str()).unwrap();
-                deserialize_filesystem(&system_json,path);
+                let mut system_json: Value = serde_json::from_str(content.as_str()).unwrap();
+                deserialize_filesystem(&mut system_json,path);
 
                 rouille::Response::json(&GENERIC_OK).with_additional_header("Access-Control-Allow-Origin", "*")
             },
 
             (POST) (/write/{name:String}) => {
-                let path =  format!("{PYTHON_FOLDER}/{name}/{SERIALIZED_SYSTEM_NAME}");
+                let path =  format!("{PYTHON_FOLDER}/{name}/");
+                let system_path =  format!("{PYTHON_FOLDER}/{name}/{SERIALIZED_SYSTEM_NAME}");
+
+                fs::remove_dir_all(&path).unwrap();
+                fs::create_dir(&path).unwrap();
+
                 let mut buffer = String::new();
-                fs::create_dir_all(Path::new(&path).parent().unwrap()).unwrap();
-                let mut file = File::create(&path).unwrap();
+                fs::create_dir_all(Path::new(&system_path).parent().unwrap()).unwrap();
+                let mut file = File::create(&system_path).unwrap();
                 request.data().unwrap().read_to_string(&mut buffer).unwrap();
                 file.write_all(buffer.as_bytes()).unwrap();
 
@@ -55,7 +60,7 @@ pub fn start_python() {
     });
 }
 
-fn deserialize_filesystem(mut folder:&Value,path:String) {
+fn deserialize_filesystem(folder:&mut Value,path:String) {
     fs::create_dir_all(Path::new(&path)).unwrap();
     for (key, val) in folder.as_object_mut().unwrap() {
         if val.is_string() {
