@@ -2,6 +2,7 @@ use std::fs;
 use std::fs::File;
 use std::io::{Read, Write};
 use std::os::windows::process::CommandExt;
+use std::path::Path;
 use std::process::Command;
 use rouille::router;
 use serde_json::Value;
@@ -32,8 +33,8 @@ pub fn start_python() {
             (POST) (/write/{name:String}) => {
                 let path =  format!("{PYTHON_FOLDER}/{name}/{SERIALIZED_SYSTEM_NAME}");
                 let mut buffer = String::new();
+                fs::create_dir_all(Path::new(&path).parent()).unwrap();
                 let mut file = File::create(&path).unwrap();
-                fs::create_dir_all(&path).unwrap();
                 request.data().unwrap().read_to_string(&mut buffer).unwrap();
                 file.write_all(buffer.as_bytes()).unwrap();
 
