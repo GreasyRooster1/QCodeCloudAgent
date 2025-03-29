@@ -6,6 +6,7 @@ use std::os::windows::process::CommandExt;
 use std::path::Path;
 use std::process::{Command, Stdio};
 use rouille::router;
+use serde::Serialize;
 use serde_json::Value;
 use crate::{CommandOutput, GENERIC_OK};
 
@@ -16,6 +17,12 @@ const PYTHON_VERSION:&str = "1.0.0";
 
 const SERIALIZED_SYSTEM_NAME:&str = "__serialized_filesystem.internal.json";
 const LOG_SYSTEM_NAME:&str = "__log_output.internal.log";
+#[derive(Serialize)]
+struct LogResponse {
+    success:bool,
+    logs:String,
+}
+
 
 pub fn start_python() {
 
@@ -103,7 +110,10 @@ pub fn start_python() {
             (POST) (/log/{name:String}) => {
                 let log_path = format!("{PYTHON_FOLDER}/{name}/{LOG_SYSTEM_NAME}");
                 println!("{}" ,log_path);
-                rouille::Response::from_file("text/text",File::open(log_path).unwrap()).with_additional_header("Access-Control-Allow-Origin", "*")
+                rouille::Response::json(&LogResponse{
+                    success: true,
+                    logs: fs::read_to_string(log_path).unwrap().to_string(),
+                }).with_additional_header("Access-Control-Allow-Origin", "*")
             },
 
             (GET) (/status) => {
