@@ -53,26 +53,40 @@ pub fn start_python() {
                 run_command("pip".to_string(),vec!["-r","requirements.txt"],format!("{PYTHON_FOLDER}/{name}/").as_str());
 
                 thread::spawn(move || {
-
-                    let stdout = Command::new("python")
+                    let binding = Command::new("python")
                         .creation_flags(CREATE_NO_WINDOW)
                         .arg("main.py")
                         .current_dir(format!("{PYTHON_FOLDER}/{name}/"))
                         .stdout(Stdio::piped())
                         .spawn()
-                        .unwrap()
+                        .unwrap();
+                    let stdout = binding
                         .stdout
                         .ok_or_else(|| "Could not capture standard output.");
+                    let stderr = binding
+                        .stderr
+                        .ok_or_else(|| "Could not capture standard error.");
 
-                    let reader = BufReader::new(stdout.unwrap());
+                    let out_reader = BufReader::new(stdout.unwrap());
+                    let err_reader = BufReader::new(stderr.unwrap());
+
                     let log_path = format!("{PYTHON_FOLDER}/{name}/{LOG_SYSTEM_NAME}");
                     File::create(&log_path).expect("Could not create file");
+
                     let mut file = OpenOptions::new()
                         .write(true)
                         .append(true)
                         .open(&log_path)
                         .unwrap();
-                    reader
+                    out_reader
+                        .lines()
+                        .filter_map(|line| line.ok())
+                        .for_each(|line| {
+                            writeln!(file, "{line}").unwrap();
+                            println!("{line}")
+                    });
+
+                    err_reader
                         .lines()
                         .filter_map(|line| line.ok())
                         .for_each(|line| {
