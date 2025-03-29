@@ -1,10 +1,10 @@
 use std::{fs, thread};
-use std::fs::File;
-use std::io::{Read, Write};
+use std::fs::{File, OpenOptions};
+use std::io::{BufRead, BufReader, Read, Write};
 use std::net::{TcpListener, TcpStream};
 use std::os::windows::process::CommandExt;
 use std::path::Path;
-use std::process::Command;
+use std::process::{Command, Stdio};
 use rouille::router;
 use serde_json::Value;
 use crate::{CommandOutput, GENERIC_OK};
@@ -15,6 +15,7 @@ const PYTHON_FOLDER:&str = "./python";
 const PYTHON_VERSION:&str = "1.0.0";
 
 const SERIALIZED_SYSTEM_NAME:&str = "__serialized_filesystem.internal.json";
+const LOG_SYSTEM_NAME:&str = "__log_output.internal.log";
 
 pub fn start_python() {
 
@@ -52,19 +53,29 @@ pub fn start_python() {
                 run_command("pip".to_string(),vec!["-r","requirements.txt"],format!("{PYTHON_FOLDER}/{name}/").as_str());
 
                 thread::spawn(move || {
-                    let listener = TcpListener::bind("localhost:8384").unwrap();
-                    let mut binding = Command::new("python")
+
+                    let stdout = Command::new("python")
                         .creation_flags(CREATE_NO_WINDOW)
+                        .arg("main.py")
                         .current_dir(format!("{PYTHON_FOLDER}/{name}/"))
-                        .args(vec!["main.py"])
-                        .spawn().unwrap();
-                    let std= (binding).stdout.unwrap();
-                    for stream in listener.incoming() {
-                        let mut out = String::new();
-                        (&std).read_to_string(&mut out).unwrap();
-                        println!("{}", out);
-                        &stream.unwrap().write_all(&out.as_bytes()).expect("Failed to write to stream");
-                    }
+                        .stdout(Stdio::piped())
+                        .spawn()
+                        .unwrap()
+                        .stdout
+                        .ok_or_else(|| "Could not capture standard output.");
+
+                    let reader = BufReader::new(stdout);
+                    File::create(LOG_SYSTEM_NAME).expect("Could not create file")
+                    let mut file = OpenOptions::new()
+                        .write(true)
+                        .append(true)
+                        .open(LOG_SYSTEM_NAME)
+                        .unwrap();
+                    reader
+                        .lines()
+                        .filter_map(|line| line.ok())
+                        .for_each(|line| writeln!(file, "{line}"));
+
                 });
 
                 rouille::Response::json(&GENERIC_OK).with_additional_header("Access-Control-Allow-Origin", "*")
