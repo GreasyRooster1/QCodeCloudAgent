@@ -50,7 +50,7 @@ pub fn start_python() {
             },
 
             (POST) (/execute/{name:String}) => {
-                run_command("pip".to_string(),vec!["-r","requirements.txt"],format!("{PYTHON_FOLDER}/{name}/").as_str());
+                run_command("pip".to_string(),vec!["install","-r","requirements.txt"],format!("{PYTHON_FOLDER}/{name}/").as_str());
 
                 thread::spawn(move || {
                     let binding = Command::new("python")
@@ -58,6 +58,7 @@ pub fn start_python() {
                         .arg("main.py")
                         .current_dir(format!("{PYTHON_FOLDER}/{name}/"))
                         .stdout(Stdio::piped())
+                        .stderr(Stdio::piped())
                         .spawn()
                         .unwrap();
                     let stdout = binding
