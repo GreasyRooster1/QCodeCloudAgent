@@ -49,9 +49,9 @@ pub fn start_python() {
 
             (POST) (/execute/{name:String}) => {
                 let main_file =  format!("{PYTHON_FOLDER}/{name}/main.py");
-                run_command("python".to_string(),vec![main_file.as_str()],format!("{PYTHON_FOLDER}/{name}").as_str());
+                run_command("python".to_string(),vec![main_file.as_str()],format!("{PYTHON_FOLDER}/{name}/").as_str());
 
-                rouille::Response::text(" ").with_additional_header("Access-Control-Allow-Origin", "*")
+                rouille::Response::json(&GENERIC_OK).with_additional_header("Access-Control-Allow-Origin", "*")
             },
 
             (GET) (/status) => {
