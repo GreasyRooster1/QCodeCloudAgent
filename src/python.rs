@@ -58,13 +58,14 @@ pub fn start_python() {
                         .current_dir(format!("{PYTHON_FOLDER}/{name}/"))
                         .args(vec!["main.py"])
                         .spawn().unwrap();
+                    let std= (binding).stdout.unwrap();
                     for stream in listener.incoming() {
                         let mut out = String::new();
-                        binding.stdout.take().unwrap().read_to_string(&mut out).unwrap();
+                        (&std).read_to_string(&mut out).unwrap();
                         println!("{}", out);
-                        &stream.unwrap().write_all(&out.as_bytes()).unwrap();
+                        &stream.unwrap().write_all(&out.as_bytes()).expect("Failed to write to stream");
                     }
-                })
+                });
 
                 rouille::Response::json(&GENERIC_OK).with_additional_header("Access-Control-Allow-Origin", "*")
             },
