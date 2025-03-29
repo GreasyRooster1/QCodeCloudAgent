@@ -51,17 +51,15 @@ pub fn start_python() {
             (POST) (/execute/{name:String}) => {
                 run_command("pip".to_string(),vec!["-r","requirements.txt"],format!("{PYTHON_FOLDER}/{name}/").as_str());
 
-
-                let listener = TcpListener::bind("localhost:8384").unwrap();
-
                 thread::spawn(move || {
+                    let listener = TcpListener::bind("localhost:8384").unwrap();
                     let mut binding = Command::new("python")
                         .creation_flags(CREATE_NO_WINDOW)
                         .current_dir(format!("{PYTHON_FOLDER}/{name}/"))
                         .args(vec!["main.py"])
                         .spawn().unwrap();
                     for stream in listener.incoming() {
-                        binding.stdout.read
+                        binding.stdout.unwrap().read()
                     }
                 })
 
