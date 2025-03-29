@@ -75,7 +75,10 @@ pub fn start_python() {
                     reader
                         .lines()
                         .filter_map(|line| line.ok())
-                        .for_each(|line| writeln!(file, "{line}").unwrap());
+                        .for_each(|line| {
+                            writeln!(file, "{line}").unwrap();
+                            println!("{line}")
+                    });
 
                 });
 
