@@ -49,6 +49,7 @@ pub fn start_python() {
 
             (POST) (/execute/{name:String}) => {
                 run_command("pip".to_string(),vec!["-r","requirements.txt"],format!("{PYTHON_FOLDER}/{name}/").as_str());
+
                 run_command("python".to_string(),vec!["main.py"],format!("{PYTHON_FOLDER}/{name}/").as_str());
 
                 rouille::Response::json(&GENERIC_OK).with_additional_header("Access-Control-Allow-Origin", "*")
@@ -81,12 +82,23 @@ fn deserialize_filesystem(folder:&mut Value,path:String) {
     }
 }
 
-fn run_command(command: String,args: Vec<&str>,dir:&str){
+fn run_command(command: String, args: Vec<&str>, dir:&str) -> CommandOutput {
     let mut str = String::new();
     let mut binding = Command::new(command)
-        //.creation_flags(CREATE_NO_WINDOW)
+        .creation_flags(CREATE_NO_WINDOW)
         .current_dir(dir)
         .args(args)
         .output()
         .unwrap();
+    let stdout = binding
+        .stdout
+        .as_mut_slice();
+    let stderr = binding
+        .stderr
+        .as_mut_slice();
+
+    CommandOutput {
+        stdout:std::str::from_utf8(&stdout).unwrap().to_string(),
+        stderr: std::str::from_utf8(&stderr).unwrap().to_string(),
+    }
 }
