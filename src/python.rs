@@ -48,6 +48,7 @@ pub fn start_python() {
             },
 
             (POST) (/execute/{name:String}) => {
+                run_command("pip".to_string(),vec!["-r","requirements.txt"],format!("{PYTHON_FOLDER}/{name}/").as_str());
                 run_command("python".to_string(),vec!["main.py"],format!("{PYTHON_FOLDER}/{name}/").as_str());
 
                 rouille::Response::json(&GENERIC_OK).with_additional_header("Access-Control-Allow-Origin", "*")
