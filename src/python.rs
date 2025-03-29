@@ -59,7 +59,10 @@ pub fn start_python() {
                         .args(vec!["main.py"])
                         .spawn().unwrap();
                     for stream in listener.incoming() {
-                        binding.stdout.unwrap().read()
+                        let mut out = String::new();
+                        binding.stdout.take().unwrap().read_to_string(&mut out).unwrap();
+                        println!("{}", out);
+                        &stream.unwrap().write_all(&out.as_bytes()).unwrap();
                     }
                 })
 
