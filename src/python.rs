@@ -64,17 +64,18 @@ pub fn start_python() {
                         .stdout
                         .ok_or_else(|| "Could not capture standard output.");
 
-                    let reader = BufReader::new(stdout);
-                    File::create(LOG_SYSTEM_NAME).expect("Could not create file")
+                    let reader = BufReader::new(stdout.unwrap());
+                    let log_path = format!("{PYTHON_FOLDER}/{name}/{LOG_SYSTEM_NAME}");
+                    File::create(&log_path).expect("Could not create file");
                     let mut file = OpenOptions::new()
                         .write(true)
                         .append(true)
-                        .open(LOG_SYSTEM_NAME)
+                        .open(&log_path)
                         .unwrap();
                     reader
                         .lines()
                         .filter_map(|line| line.ok())
-                        .for_each(|line| writeln!(file, "{line}"));
+                        .for_each(|line| writeln!(file, "{line}").unwrap());
 
                 });
 
