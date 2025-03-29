@@ -100,6 +100,12 @@ pub fn start_python() {
                 rouille::Response::json(&GENERIC_OK).with_additional_header("Access-Control-Allow-Origin", "*")
             },
 
+            (POST) (/log/{name:String}) => {
+                let log_path = format!("{PYTHON_FOLDER}/{name}/{LOG_SYSTEM_NAME}");
+                println!("{}" ,log_path);
+                rouille::Response::from_file("text/text",File::open(log_path).unwrap()).with_additional_header("Access-Control-Allow-Origin", "*")
+            },
+
             (GET) (/status) => {
                 rouille::Response::text(" ").with_additional_header("Access-Control-Allow-Origin", "*")
             },
