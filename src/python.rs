@@ -1,6 +1,7 @@
-use std::fs;
+use std::{fs, thread};
 use std::fs::File;
 use std::io::{Read, Write};
+use std::net::{TcpListener, TcpStream};
 use std::os::windows::process::CommandExt;
 use std::path::Path;
 use std::process::Command;
@@ -50,7 +51,19 @@ pub fn start_python() {
             (POST) (/execute/{name:String}) => {
                 run_command("pip".to_string(),vec!["-r","requirements.txt"],format!("{PYTHON_FOLDER}/{name}/").as_str());
 
-                run_command("python".to_string(),vec!["main.py"],format!("{PYTHON_FOLDER}/{name}/").as_str());
+
+                let listener = TcpListener::bind("localhost:8384").unwrap();
+
+                thread::spawn(move || {
+                    let mut binding = Command::new("python")
+                        .creation_flags(CREATE_NO_WINDOW)
+                        .current_dir(format!("{PYTHON_FOLDER}/{name}/"))
+                        .args(vec!["main.py"])
+                        .spawn().unwrap();
+                    for stream in listener.incoming() {
+                        binding.stdout.read
+                    }
+                })
 
                 rouille::Response::json(&GENERIC_OK).with_additional_header("Access-Control-Allow-Origin", "*")
             },
