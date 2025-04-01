@@ -6,6 +6,7 @@ use std::os::windows::process::CommandExt;
 use std::process::{ChildStdout, Command, Output};
 use std::string::ToString;
 use rouille::router;
+use rouille::websocket::Message;
 use serde::Serialize;
 use crate::{CommandOutput, GENERIC_OK};
 
@@ -151,6 +152,34 @@ pub fn start_arduino() {
                 let mut file = File::create(&path).unwrap();
                 request.data().unwrap().read_to_string(&mut buffer).unwrap();
                 file.write_all(buffer.as_bytes()).unwrap();
+
+                rouille::Response::json(&GENERIC_OK).with_additional_header("Access-Control-Allow-Origin", "*")
+            },
+
+            (POST) (/serial/{name:String}) => {
+                let (mut socket, response) = connect(
+                    Url::parse("wss://data.alpaca.markets/stream").unwrap()
+                ).expect("Can't connect");
+
+                socket.write_message(Message::Text(r#"{
+                    "action": "authenticate",
+                    "data": {
+                        "key_id": "API-KEY",
+                        "secret_key": "SECRET-KEY"
+                    }
+                }"#.into()));
+
+                socket.write_message(Message::Text(r#"{
+                    "action": "listen",
+                    "data": {
+                        "streams": ["AM.SPY"]
+                    }
+                }"#.into()));
+
+                loop {
+                    let msg = socket.read_message().expect("Error reading message");
+                    println!("Received: {}", msg);
+                }
 
                 rouille::Response::json(&GENERIC_OK).with_additional_header("Access-Control-Allow-Origin", "*")
             },
