@@ -157,11 +157,43 @@ pub fn start_arduino() {
             },
 
             (POST) (/serial/{name:String}) => {
+               let board_out = run_cli_command(vec![
+                     "board",
+                     "list",
+                 ]);
+                //let board_out = "Port Protocol Type          Board Name FQBN            Core\nCOM1 serial   Serial Port   Unknown\nCOM4 serial   Serial Port (USB) Unknown".to_string();
+                println!("{}", board_out);
+
+                let board_out_words = board_out.split_whitespace().collect::<Vec<&str>>();
+                if(board_out_words.len()==3){
+                    return rouille::Response::json(&UploadResponse{
+                        success:false,
+                        port:"".to_string(),
+                        message: board_out,
+                    }).with_additional_header("Access-Control-Allow-Origin", "*");
+                }
+
+                let margin = 7;
+                let mut port="COM3";
+                let mut i=0;
+                loop{
+                    if margin+5*i >= board_out_words.len(){
+                        break;
+                    }
+                    if margin+4+5*i >= board_out_words.len(){
+                        break;
+                    }
+                    let get_port = board_out_words[margin+5*i];
+                    let is_usb = board_out_words.get(margin+4+5*i).unwrap().eq(&"(USB)".to_string());
+                    port = get_port.clone();
+                    if is_usb{
+                        break;
+                    }
+                    i+=1;
+                }
                 let mut binding = Command::new("arduino-cli")
                     .creation_flags(CREATE_NO_WINDOW)
-                    .current_dir(format!("{SKETCHES_FOLDER}/{dir}"))
-                    .arg("--no-color")
-                    .args(args)
+                    .args(vec!["monitor","-p",port])
                     .output()
                     .unwrap();
 
