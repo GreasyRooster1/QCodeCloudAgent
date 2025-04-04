@@ -157,29 +157,13 @@ pub fn start_arduino() {
             },
 
             (POST) (/serial/{name:String}) => {
-                let (mut socket, response) = connect(
-                    Url::parse("wss://data.alpaca.markets/stream").unwrap()
-                ).expect("Can't connect");
-
-                socket.write_message(Message::Text(r#"{
-                    "action": "authenticate",
-                    "data": {
-                        "key_id": "API-KEY",
-                        "secret_key": "SECRET-KEY"
-                    }
-                }"#.into()));
-
-                socket.write_message(Message::Text(r#"{
-                    "action": "listen",
-                    "data": {
-                        "streams": ["AM.SPY"]
-                    }
-                }"#.into()));
-
-                loop {
-                    let msg = socket.read_message().expect("Error reading message");
-                    println!("Received: {}", msg);
-                }
+                let mut binding = Command::new("arduino-cli")
+                    .creation_flags(CREATE_NO_WINDOW)
+                    .current_dir(format!("{SKETCHES_FOLDER}/{dir}"))
+                    .arg("--no-color")
+                    .args(args)
+                    .output()
+                    .unwrap();
 
                 rouille::Response::json(&GENERIC_OK).with_additional_header("Access-Control-Allow-Origin", "*")
             },
