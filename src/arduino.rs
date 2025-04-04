@@ -191,11 +191,11 @@ pub fn start_arduino() {
                     }
                     i+=1;
                 }
-                let mut binding = Command::new("arduino-cli")
-                    .creation_flags(CREATE_NO_WINDOW)
+                Command::new("arduino-cli")
                     .args(vec!["monitor","-p",port])
-                    .output()
+                    .spawn()
                     .unwrap();
+
 
                 rouille::Response::json(&GENERIC_OK).with_additional_header("Access-Control-Allow-Origin", "*")
             },
