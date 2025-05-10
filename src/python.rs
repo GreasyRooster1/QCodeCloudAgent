@@ -5,6 +5,7 @@ use std::net::{TcpListener, TcpStream};
 use std::os::windows::process::CommandExt;
 use std::path::Path;
 use std::process::{Command, Stdio};
+use std::thread::JoinHandle;
 use rouille::router;
 use serde::Serialize;
 use serde_json::Value;
@@ -17,6 +18,9 @@ const PYTHON_VERSION:&str = "1.0.0";
 
 const SERIALIZED_SYSTEM_NAME:&str = "__serialized_filesystem.internal.json";
 const LOG_SYSTEM_NAME:&str = "__log_output.internal.log";
+
+const IMAGE_FILE_TYPES: [&str; 5] = ["png","jpg","jpeg","gif","webp"];
+
 #[derive(Serialize)]
 struct LogResponse {
     success:bool,
@@ -134,14 +138,29 @@ fn deserialize_filesystem(folder:&mut Value,path:String) {
     for (key, val) in folder.as_object_mut().unwrap() {
         let parsed_key = key.replace("➽",".");
         if val.is_string() {
-            let mut file = File::create(format!("{}/{}", &path, &parsed_key)).unwrap();
-            file.write_all(val.as_str().unwrap().as_bytes()).unwrap();
+            deserialize_file(&path, &parsed_key,&val.as_str().unwrap());
         }
         if val.is_object() {
             deserialize_filesystem(val, format!("{}/{}", &path, &parsed_key));
         }
     }
 }
+
+fn deserialize_file(path:&str,name:&str,content:&str) {
+    let mut file = File::create(format!("{}/{}", &path, &name)).unwrap();
+    let extension = Path::new(name).extension().unwrap().to_str().unwrap();
+    if IMAGE_FILE_TYPES.contains(&extension) {
+        //thread::spawn(move ||{
+            reqwest::blocking::get(content)
+                .unwrap()
+                .copy_to(&mut file)
+                .unwrap();
+        //});
+    }else {
+        file.write_all(content.as_bytes()).unwrap();
+    }
+}
+
 
 fn run_command(command: String, args: Vec<&str>, dir:&str) -> CommandOutput {
     let mut str = String::new();
