@@ -19,7 +19,7 @@ const PYTHON_VERSION:&str = "1.0.0";
 const SERIALIZED_SYSTEM_NAME:&str = "__serialized_filesystem.internal.json";
 const LOG_SYSTEM_NAME:&str = "__log_output.internal.log";
 
-const IMAGE_FILE_TYPES: [&str; 5] = ["png","jpg","jpeg","gif","webp"];
+const TEXT_FILE_TYPES: [&str; 21] = ["html","css","js","py","txt","json","bat","cpp","c","rs","ts","jsx","tsx","sh","dat","yaml","toml","xml","","http",""];
 
 #[derive(Serialize)]
 struct LogResponse {
@@ -149,7 +149,7 @@ fn deserialize_filesystem(folder:&mut Value,path:String) {
 fn deserialize_file(path:&str,name:&str,content:&str) {
     let mut file = File::create(format!("{}/{}", &path, &name)).unwrap();
     let extension = Path::new(name).extension().unwrap().to_str().unwrap();
-    if IMAGE_FILE_TYPES.contains(&extension) {
+    if !TEXT_FILE_TYPES.contains(&extension) {
         //thread::spawn(move ||{
             reqwest::blocking::get(content)
                 .unwrap()
